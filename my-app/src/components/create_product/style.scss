@@ -1,0 +1,31 @@
+.modal {
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.frame {
+    background-color: #fff;
+    max-width: fit-content;
+    margin-top: 10%;
+    max-height: fit-content;
+    padding: 20px;
+    position: relative;
+
+    &__btn {
+        margin-top: 50px;
+
+        &-close {
+            position: absolute;
+            top: -15px;
+            right: 0;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        &:hover {
+            opacity: 0.6;
+        }
+    }
+}

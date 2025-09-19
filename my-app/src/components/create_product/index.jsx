@@ -1,0 +1,129 @@
+import { useEffect, useState } from "react";
+import './style.scss'
+import { MdClose } from "react-icons/md";
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/src/sweetalert2.scss'
+
+function CreateProduct(props) {
+    const { onReload } = props;
+    const [modal, setModal] = useState(false);
+    const [dataCategory, setDataCategory] = useState([]);
+    const [dataInput, setDataInput] = useState({});
+
+    useEffect(() => {
+        fetch('http://localhost:3001/categories')
+            .then(res => res.json())
+            .then(data => {
+                setDataCategory(data);
+            })
+    })
+
+    const handleModal = () => {
+        setModal(!modal);
+    }
+
+    const handleChange = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        setDataInput({
+            ...dataInput,
+            [name]: value
+        })
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch('http://localhost:3001/products', {
+            method: "POST",
+            headers:{
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dataInput)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    onReload();
+                    setModal(!modal);
+                    Swal.fire({
+                        title: "Drag me!",
+                        icon: "success",
+                        draggable: true
+                    });
+                }
+            })
+    }
+
+    return (
+        <>
+            <button onClick={handleModal}>Create a new product</button>
+            {modal && (
+                <div className="modal" onClick={handleModal}>
+                    <form className="frame" onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Title</td>
+                                    <td>
+                                        <input name="title" onChange={handleChange} required/>
+                                    </td>
+                                </tr>
+                                {dataCategory.length > 0 && (
+                                    <tr>
+                                        <td>Category</td>
+                                        <td>
+                                            <select name="category" onChange={handleChange}>
+                                                <option>Default</option>
+                                                {dataCategory.map((item, index) => (
+                                                    <option key={index}>{item}</option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr>
+                                    <td>Price</td>
+                                    <td>
+                                        <input name="price" onChange={handleChange} required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Discount Percentage</td>
+                                    <td>
+                                        <input name="discountPercentage" onChange={handleChange} required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Stock</td>
+                                    <td>
+                                        <input name="stock" onChange={handleChange} required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Thumbnail</td>
+                                    <td>
+                                        <input name="thumbnail" onChange={handleChange} required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Description</td>
+                                    <td>
+                                        <textarea rows={4} name="description" onChange={handleChange} required></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div className="frame__btn">
+                            <div className="frame__btn-close" onClick={handleModal}>
+                                <MdClose />
+                            </div>
+                            <input type="submit" value="Create"/>
+                        </div>
+                    </form>
+                </div>
+            )}
+        </>
+    )
+}
+export default CreateProduct;

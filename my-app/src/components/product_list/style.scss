@@ -1,0 +1,44 @@
+.product {
+  flex-wrap: wrap;
+
+  &__item {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    position: relative;
+
+     &-img {
+       box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+       
+       img {
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        width: 100%;
+      }
+     }
+
+     &-content {
+      padding: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+      min-height: 125px;
+     }
+  }
+
+  &__title {
+    padding: 5px 0px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  &__discount {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    background-color: yellow;
+  }
+
+  &__btns {
+    position: absolute;
+    bottom: 0;
+  }
+}
