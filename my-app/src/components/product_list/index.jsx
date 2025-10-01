@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import './style.scss'
 import EditProduct from "../edit_product";
 import DeleteProduct from "../delete_product";
+import { getProductList } from "../../services/productList";
 
 function Products(props) {
     const { reload } = props;
@@ -13,11 +14,11 @@ function Products(props) {
     }
 
     useEffect(() => {
-        fetch('http://localhost:3001/products')
-            .then(res => res.json())
-            .then(data => {
-                setData(data.reverse());
-            })
+        const fetchApi = async () => {
+            const result = await getProductList()
+            setData(result.reverse());
+        }
+        fetchApi()
     }, [reload, editReload])
 
     return (

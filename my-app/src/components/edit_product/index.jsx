@@ -3,6 +3,8 @@ import '../create_product/style.scss';
 import { MdClose } from "react-icons/md";
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+import { getEditProduct } from "../../services/productList";
+import { getCategoryList } from "../../services/categoryList";
 
 function EditProduct(props) {
     const { item, onReload } = props;
@@ -11,12 +13,12 @@ function EditProduct(props) {
     const [dataInput, setDataInput] = useState(item);
 
     useEffect(() => {
-        fetch('http://localhost:3001/categories')
-            .then(res => res.json())
-            .then(data => {
-                setDataCategory(data);
-            })
-    })
+        const fetchApi = async () => {
+            const result = await getCategoryList();
+            setDataCategory(result);
+        }
+        fetchApi();
+    }, [])
 
     const handleModal = () => {
         setModal(!modal);
@@ -31,28 +33,18 @@ function EditProduct(props) {
         })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        fetch(`http://localhost:3001/products/${item.id}`, {
-            method: "PATCH",
-            headers:{
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dataInput)
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    setModal(!modal);
-                    onReload();
-                    Swal.fire({
-                        title: "Drag me!",
-                        icon: "success",
-                        draggable: true
-                    });
-                }
-            })
+        const result = await getEditProduct(item.id, dataInput);
+        if (result) {
+            setModal(!modal);
+            onReload();
+            Swal.fire({
+                title: "Drag me!",
+                icon: "success",
+                draggable: true
+            });
+        }
     }
 
     return (
@@ -66,7 +58,7 @@ function EditProduct(props) {
                                 <tr>
                                     <td>Title</td>
                                     <td>
-                                        <input name="title" value={dataInput.title} onChange={handleChange} required/>
+                                        <input name="title" value={dataInput.title} onChange={handleChange} required />
                                     </td>
                                 </tr>
                                 {dataCategory.length > 0 && (
@@ -85,25 +77,25 @@ function EditProduct(props) {
                                 <tr>
                                     <td>Price</td>
                                     <td>
-                                        <input name="price" value={dataInput.price} onChange={handleChange} required/>
+                                        <input name="price" value={dataInput.price} onChange={handleChange} required />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Discount Percentage</td>
                                     <td>
-                                        <input name="discountPercentage"value={dataInput.discountPercentage} onChange={handleChange} required/>
+                                        <input name="discountPercentage" value={dataInput.discountPercentage} onChange={handleChange} required />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Stock</td>
                                     <td>
-                                        <input name="stock" value={dataInput.stock} onChange={handleChange} required/>
+                                        <input name="stock" value={dataInput.stock} onChange={handleChange} required />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Thumbnail</td>
                                     <td>
-                                        <input name="thumbnail" value={dataInput.thumbnail} onChange={handleChange} required/>
+                                        <input name="thumbnail" value={dataInput.thumbnail} onChange={handleChange} required />
                                     </td>
                                 </tr>
                                 <tr>
@@ -118,7 +110,7 @@ function EditProduct(props) {
                             <div className="frame__btn-close" onClick={handleModal}>
                                 <MdClose />
                             </div>
-                            <input type="submit" value="Create"/>
+                            <input type="submit" value="Create" />
                         </div>
                     </form>
                 </div>

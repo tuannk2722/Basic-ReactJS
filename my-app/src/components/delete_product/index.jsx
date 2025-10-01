@@ -1,8 +1,14 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+import { getDeleteProduct } from '../../services/productList';
 
 function DeleteProduct(props) {
     const { item, onReload } = props;
+
+    const deleteItem = async () => {
+        const result = await getDeleteProduct(item.id);
+        return result;
+    }
 
     const  handleClick = () => {
         Swal.fire({
@@ -13,11 +19,8 @@ function DeleteProduct(props) {
             denyButtonText: `Don't save`
             }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://localhost:3001/products/${item.id}`, { method: "DELETE" })
-                .then(res => res.json())
-                .then(data => {
-                    onReload();
-                })
+                deleteItem();
+                onReload();
                 Swal.fire("Saved!", "", "success");
             } else if (result.isDenied) {
                 Swal.fire("Changes are not saved", "", "info");
